@@ -3,32 +3,33 @@ from typing import List
 
 class Solution:
     def countComponents(self, n: int, edges: List[List[int]]) -> int:
-        def countParents(parents):
-            numSet = set()
-            count = 0
-            for n in parents:
-                if n not in numSet:
-                    numSet.add(n)
-                    count += 1
-            return count
+        par = [i for i in range(n)]
+        rank = [1 for i in range(n)]
 
-        parents = [i for i in range(n)]
-        ranks = [1 for i in range(n)]
+        def find(n1):
+            if par[n1] == n1:
+                return n1
+            par[n1] = par[par[n1]]  # path compression
+            return find(par[n1])
 
-        for edge in edges:
-            parent0 = parents[edge[0]]
-            parent1 = parents[edge[1]]
+        def union(n1, n2):
+            p1, p2 = find(n1), find(n2)  # find root parents
 
-            if ranks[parent0] > ranks[parent1]:
-                ranks[parent0] += ranks[parent1]
-                ranks[parent1] = 0
-                parents[edge[1]] = parent0
+            if p1 == p2:
+                return 0
+
+            if rank[p1] > rank[p2]:
+                par[p2] = p1
+                rank[p1] += rank[p2]
             else:
-                ranks[parent1] += ranks[parent0]
-                ranks[parent0] = 0
-                parents[edge[0]] = parent1
+                par[p1] = p2
+                rank[p2] += rank[p1]
+            return 1
 
-        return countParents(parents)
+        res = n
+        for n1, n2 in edges:
+            res -= union(n1, n2)
+        return res
 
 
 solution = Solution()
