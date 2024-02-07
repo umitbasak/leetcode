@@ -9,9 +9,4 @@ class Solution {
 
         return getSum(carry, xor);
     }
-
-    public static void main(String[] args) {
-        Solution solution = new Solution();
-        solution.getSum(-1, 1);
-    }
 }
